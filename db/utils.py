@@ -1,8 +1,11 @@
-import datetime
-from sqlalchemy import Column, DateTime, Integer
+from datetime import datetime
+
+import pytz
+from sqlalchemy import Column, DateTime, Integer, func, text
 from sqlalchemy import delete as sqlalchemy_delete
 from sqlalchemy import update as sqlalchemy_update
 from sqlalchemy.future import select
+from sqlalchemy.orm import declared_attr
 
 from db import db, Base
 
@@ -64,10 +67,13 @@ class AbstractClass:
         for i in objects.all():
             result.append(i[0])
         return result
-
-
+tz=  "TIMEZONE('Asia/Tashkent', NOW())"
 class CreatedModel(Base, AbstractClass):
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower() + 's'
+
     __abstract__ = True
     id = Column(Integer,primary_key=True,autoincrement=True)
-    created_at = Column(DateTime(), default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), server_default=text(tz))
+    updated_at = Column(DateTime(timezone=True), server_default=text(tz),onupdate=func.now())
