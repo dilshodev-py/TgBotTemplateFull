@@ -5,7 +5,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette_admin.contrib.sqla import Admin, ModelView
 
 from db import db
-from db.models import Product, Category
 from web.provider import UsernameAndPasswordProvider
 
 app = Starlette()
@@ -25,15 +24,12 @@ class CategoryModelView(ModelView):
     exclude_fields_from_list = ["id"]
 
 
-# admin.add_view(ProductModelView(Product))
 
 
-admin.add_view(ProductModelView(Product))
-admin.add_view(CategoryModelView(Category))
 
 admin.mount_to(app)
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='198.12.2.1', port=8000)
+    uvicorn.run(app, host='localhost', port=8000)
 
 
