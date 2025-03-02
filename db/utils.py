@@ -27,7 +27,6 @@ def get_current_time() -> datetime:
 class AbstractClass:
     @staticmethod
     async def commit():
-        """Commit the session with error handling."""
         try:
             await db.commit()
         except Exception as e:
@@ -37,7 +36,6 @@ class AbstractClass:
 
     @classmethod
     async def create(cls, **kwargs: Any) -> "AbstractClass":
-        """Create a new instance and save it to the database."""
         obj = cls(**kwargs)
         db.add(obj)
         await cls.commit()
@@ -46,7 +44,6 @@ class AbstractClass:
 
     @classmethod
     async def update(cls, id_: int, **kwargs: Any) -> None:
-        """Update an existing instance by ID."""
         query = (
             sqlalchemy_update(cls)
             .where(cls.id == id_)
@@ -59,7 +56,6 @@ class AbstractClass:
 
     @classmethod
     async def get(cls, id_: int) -> Optional["AbstractClass"]:
-        """Retrieve an instance by ID or return None."""
         query = select(cls).where(cls.id == id_)
         objects = await db.execute(query)
         obj = objects.first()
@@ -67,7 +63,6 @@ class AbstractClass:
 
     @classmethod
     async def delete(cls, id_: int) -> bool:
-        """Delete an instance by ID and return True if successful."""
         query = sqlalchemy_delete(cls).where(cls.id == id_)
         result = await db.execute(query)
         if result.rowcount > 0:
@@ -79,7 +74,6 @@ class AbstractClass:
 
     @classmethod
     async def get_all(cls, order_fields: List[str] = None) -> List["AbstractClass"]:
-        """Retrieve all instances, optionally ordered by fields."""
         query = select(cls)
         if order_fields:
             order_by = [getattr(cls, field) for field in order_fields if hasattr(cls, field)]
